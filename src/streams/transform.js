@@ -1,25 +1,21 @@
-import Transform, { pipeline } from "stream";
-import path, { dirname } from "path";
-import fs from "fs";
+import { Transform } from "stream";
 
-const args = process.argv;
-const __filename = args[1];
-const __dirname = dirname(__filename);
-const filePath = "files";
-const fileName = "fileToRead.txt";
-const fileFullName = path.join(__dirname, filePath, fileName);
-const fileNameWrite = "fileToWrite.txt";
-const fileFullNameWrite = path.join(__dirname, filePath, fileNameWrite);
+const input = process.stdin;
+const output = process.stdout;
 
 const transform = async () => {
-  process.stdin.resume();
-  process.stdin.setEncoding("utf-8");
-
-  process.stdin.on("data", (inputStdin) => {
-    const result = inputStdin.replace('\n', '');
-    process.stdout.write(`${result.split("").reverse().join("")}\n\n`)
+  const reverse = new Transform({
+    transform(chunk, _, callback) {
+      const reversedChunk = chunk
+        .toString()
+        .trim()
+        .split("")
+        .reverse()
+        .join("");
+      callback(null, reversedChunk + "\n");
+    },
   });
-  process.stdin.on("end", () => process.stdout.end());
+  input.pipe(reverse).pipe(output);
 };
 
 await transform();

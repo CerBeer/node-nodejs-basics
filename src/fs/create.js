@@ -8,6 +8,7 @@ const create = async () => {
   const fileName = "fresh.txt";
   const fileFullNameToWrite = path.join(basePath, filePath, fileName);
   const contentToWrite = "I am fresh and young";
+
   const errorMessage = "FS operation failed";
   const errorNeedThrow = await fs
     .access(fileFullNameToWrite)

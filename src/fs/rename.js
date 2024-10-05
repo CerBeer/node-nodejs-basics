@@ -7,9 +7,9 @@ const rename = async () => {
   const filePath = "files";
   const wrongFileName = "wrongFilename.txt";
   const properFileName = "properFilename.md";
-
   const wrongFileFullName = path.join(basePath, filePath, wrongFileName);
   const properFileFullName = path.join(basePath, filePath, properFileName);
+
   const errorMessage = "FS operation failed";
 
   let errorNeedThrow = await fs

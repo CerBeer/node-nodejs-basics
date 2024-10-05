@@ -1,11 +1,11 @@
 import path, { dirname } from "path";
 import fs from "fs";
 
-const args = process.argv;
-const __filename = args[1];
-const __dirname = dirname(__filename);
-
 const write = async () => {
+  const args = process.argv;
+  const __filename = args[1];
+  const __dirname = dirname(__filename);
+
   const filePath = "files";
   const fileName = "fileToWrite.txt";
   const fileFullName = path.join(__dirname, filePath, fileName);
