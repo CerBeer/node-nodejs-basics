@@ -1,41 +1,43 @@
 import { Worker } from "worker_threads";
 import { cpus } from "os";
-import path from "path";
-import * as url from "url";
-const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
-const performCalculationsNumber = async (incrementalNumber) => {
-    const cores = cpus().length;
-    const file = path.join(__dirname, "worker.js");
-  
-    const createWorkerThread = (num) =>
-      new Promise((resolve) => {
-        const worker = new Worker(file, { workerData: num });
-  
-        worker.on("message", (data) =>
-          resolve({
-            status: "resolved",
-            data,
-          })
-        );
-  
-        worker.on("error", (data) =>
-          resolve({
-            status: "error",
-            data: null,
-          })
-        );
-      });
-  
-    const workerThreads = Array.from({ length: cores }, (_, i) =>
-      createWorkerThread(incrementalNumber + i)
+const basePath = dirname(fileURLToPath(import.meta.url));
+const fileWorker = path.join(basePath, "worker.js");
+
+const createWorkerThread = (num) => {
+  const result = new Promise((resolve) => {
+    const worker = new Worker(fileWorker, { workerData: num });
+
+    worker.on("message", (data) =>
+      resolve({
+        status: "resolved",
+        data,
+      })
     );
-    const results = await Promise.all(workerThreads);
-    console.log(results);
-  };
+
+    worker.on("error", (data) =>
+      resolve({
+        status: "error",
+        data: null,
+      })
+    );
+  });
+  return result;
+}
 
 const performCalculations = async () => {
-    await performCalculationsNumber(10);
+  const cores = cpus().length;
+  const initNumber = 10;
+
+  const workerThreads = new Array;
+  for (let i = 0; i < cores; i += 1) {
+    workerThreads.push(createWorkerThread(initNumber + i));
+  }
+
+  const results = await Promise.all(workerThreads);
+  console.log(results);
 };
 
 await performCalculations();
