@@ -25,13 +25,13 @@ const createWorkerThread = (num) => {
     );
   });
   return result;
-}
+};
 
 const performCalculations = async () => {
   const cores = cpus().length;
   const initNumber = 10;
 
-  const workerThreads = new Array;
+  const workerThreads = new Array();
   for (let i = 0; i < cores; i += 1) {
     workerThreads.push(createWorkerThread(initNumber + i));
   }
